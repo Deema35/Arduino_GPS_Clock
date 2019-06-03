@@ -8,4 +8,4 @@ In folder CAD-3D-Model located CAD 3D model created in Creo Parametric. For view
 
 В папке CAD-3D-Model находится 3D модель сделаная в програмном пакете Creo Parametric. Чтобы её просмотреть вам нужен Creo View Express.
 
-[Habrahabr.ru](https://habr.com/ru/post/454676/)
+Ссылка на статью [Habrahabr.ru](https://habr.com/ru/post/454676/)
