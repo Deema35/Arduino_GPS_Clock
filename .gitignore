@@ -1,0 +1,11 @@
+# Project files
+
+*.sln
+*.vcxproj
+*.filters
+*.user
+
+# Folders
+__vm/*
+Release/*
+
