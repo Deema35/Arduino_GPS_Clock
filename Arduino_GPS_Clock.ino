@@ -2,10 +2,6 @@
 #include "Define.h"
 #include "GPS_Clock.h"
 
-volatile unsigned long S1LastTime = 0;
-
-volatile unsigned long S2LastTime = 0;
-
 volatile int EncoderTurnCounter = 0;
 
 volatile bool S1EncoderTick = false;
@@ -75,18 +71,9 @@ void loop()
 
 void EncoderS1ClickFunk()
 {
-	S1LastTime = millis();
 	if (S2EncoderTick)
 	{
-		if (S1LastTime - S2LastTime < MaxEncoderTurnDelay)
-		{
-			EncoderTurnCounter++;
-		}
-		else
-		{
-			S1EncoderTick = true;
-		}
-
+		EncoderTurnCounter++;
 		S2EncoderTick = false;
 	}
 	else
@@ -97,19 +84,9 @@ void EncoderS1ClickFunk()
 
 void EncoderS2ClickFunk()
 {
-	S2LastTime = millis();
-
 	if (S1EncoderTick)
 	{
-		if (S2LastTime - S1LastTime < MaxEncoderTurnDelay)
-		{
-			EncoderTurnCounter--;
-		}
-		else
-		{
-			S2EncoderTick = true;
-		}
-
+		EncoderTurnCounter--;
 		S1EncoderTick = false;
 	}
 	else
