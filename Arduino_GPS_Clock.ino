@@ -73,7 +73,14 @@ void EncoderS1ClickFunk()
 {
 	if (S2EncoderTick)
 	{
-		EncoderTurnCounter++;
+		if (!digitalRead(EncoderS2))
+		{
+			EncoderTurnCounter++;
+		}
+		{
+			S1EncoderTick = true;
+		}
+		
 		S2EncoderTick = false;
 	}
 	else
@@ -86,7 +93,13 @@ void EncoderS2ClickFunk()
 {
 	if (S1EncoderTick)
 	{
-		EncoderTurnCounter--;
+		if (!digitalRead(EncoderS1))
+		{
+			EncoderTurnCounter--;
+		}
+		{
+			S2EncoderTick = true;
+		}
 		S1EncoderTick = false;
 	}
 	else

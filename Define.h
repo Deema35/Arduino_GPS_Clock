@@ -23,7 +23,6 @@
 #define LightSensorSDA A4
 #define LightSensorSCL A5
 
-#define MaxEncoderTurnDelay 70 
 #define DebounceButtonClickDelay 100 
 #define ChangeStaeClockDelay 500 //Delay between change state if state blocked
 #define SinhronizationDelaySec  86400 //Deleay between time syncronization in seconds
