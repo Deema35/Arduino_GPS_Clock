@@ -15,7 +15,7 @@ class GPS_Clock
 {
 public:
 
-	GPS_Clock(volatile int& EncoderTurnCounter) : GPSModuleSerial(GPSRX, GPSTX), Encoder(EncoderTurnCounter){}
+	GPS_Clock() : GPSModuleSerial(GPSRX, GPSTX){}
 
 	void Setup();
 

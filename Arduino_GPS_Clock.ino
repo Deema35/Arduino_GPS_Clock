@@ -2,13 +2,8 @@
 #include "Define.h"
 #include "GPS_Clock.h"
 
-volatile int EncoderTurnCounter = 0;
 
-volatile bool S1EncoderTick = false;
-
-volatile bool S2EncoderTick = false;
-
-GPS_Clock Clock(EncoderTurnCounter);
+GPS_Clock Clock;
 
 // The setup() function runs once each time the micro-controller starts
 void setup()
@@ -44,8 +39,8 @@ void setup()
 	pinMode(EncoderS1, INPUT);
 	pinMode(EncoderS2, INPUT);
 
-	attachInterrupt(0, EncoderS1ClickFunk, FALLING);
-	attachInterrupt(1, EncoderS2ClickFunk, FALLING);
+	attachInterrupt(0, Clock.Encoder.S1Function, FALLING);
+	attachInterrupt(1, Clock.Encoder.S2Function, FALLING);
 
 
 	Clock.Setup();
@@ -59,52 +54,10 @@ void setup()
 
 // Add the main program code into the continuous loop() function
 
-
-
-
-
 void loop()
 {
 	Clock.Loop();
 
 }
 
-void EncoderS1ClickFunk()
-{
-	if (S2EncoderTick)
-	{
-		if (!digitalRead(EncoderS2))
-		{
-			EncoderTurnCounter++;
-		}
-		{
-			S1EncoderTick = true;
-		}
-		
-		S2EncoderTick = false;
-	}
-	else
-	{
-		S1EncoderTick = true;
-	}
-}
 
-void EncoderS2ClickFunk()
-{
-	if (S1EncoderTick)
-	{
-		if (!digitalRead(EncoderS1))
-		{
-			EncoderTurnCounter--;
-		}
-		{
-			S2EncoderTick = true;
-		}
-		S1EncoderTick = false;
-	}
-	else
-	{
-		S2EncoderTick = true;
-	}
-	
-}

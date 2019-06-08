@@ -5,13 +5,12 @@ class cEncoder
 {
 public:
 
-	cEncoder(volatile int& _EncoderTurnCounter) : EncoderTurnCounter(_EncoderTurnCounter) {}
-
-	void ResetCounter() { EncoderTurnCounter = 0; }
+	void ResetCounter();
 
 	int GetEncoderTurns();
 
-private:
+	static void S1Function();
 
-	volatile int& EncoderTurnCounter;
+	static void S2Function();
+
 };
