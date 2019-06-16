@@ -23,10 +23,11 @@
 #define LightSensorSDA A4
 #define LightSensorSCL A5
 
-#define DebounceButtonClickDelay 100 
-#define ChangeStaeClockDelay 500 //Delay between change state if state blocked
+#define DebounceButtonClickDelayMiliSec 100 
+#define ChangeStaeClockDelayMiliSec 500 //Delay between change state if state blocked
 #define SinhronizationDelaySec  86400 //Deleay between time syncronization in seconds
 #define AlaramAllertDurationMin 1 
+#define DelayFromLastDisplayModeSwitchMiliSec 10000
 
 
 
@@ -93,5 +94,15 @@ namespace GPSTracingDisplayMode
 		SateliteCount,
 		latitude,
 		longitude
+	};
+}
+
+namespace NormaStaelDisplayMode
+{
+	enum Value
+	{
+		Time,
+		SynchronizationTime,
+		AlarmTime
 	};
 }

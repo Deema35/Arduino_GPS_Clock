@@ -31,6 +31,10 @@ public:
 
 	uint8_t GetAlaramMin() const { return AlaramMin; }
 
+	uint8_t GetSynchronizationHour() const;
+
+	uint8_t GetSynchronizationMin() const;
+
 	unsigned long  GetSecondsFromLastSinhronization() const { return (millis() - LastSynhronizationCount) / 1000; }
 
 	EClockState::Value GetCurrentState();

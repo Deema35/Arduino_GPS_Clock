@@ -18,11 +18,11 @@ void GPS_Clock::Setup()
 
 	if (!digitalRead(AllaramEnableButton) || !digitalRead(EncodeClick))
 	{
-		CurrentState = CreateState(EClockState::GPSTracing, this);
+		CurrentState = CreateState(EClockState::GPSTracing, *this);
 	}
 	else
 	{
-		CurrentState = CreateState(EClockState::Synchronization, this);
+		CurrentState = CreateState(EClockState::Synchronization, *this);
 	}
 	
 
@@ -77,6 +77,27 @@ uint8_t GPS_Clock::GetHour() const
 	return Result % 24;
 }
 
+
+uint8_t GPS_Clock::GetSynchronizationMin() const
+{
+	unsigned long Result = SynhronizationTimeSec;
+
+	Result = Result / 60;
+
+	return Result % 60;
+}
+
+
+uint8_t GPS_Clock::GetSynchronizationHour() const
+{
+	unsigned long Result = SynhronizationTimeSec;
+	Result = Result / 3600;
+
+	Result = TimeZone + Result;
+
+	return Result % 24;
+}
+
 EClockState::Value GPS_Clock::GetCurrentState()
 { 
 	return CurrentState->GetType();
@@ -107,7 +128,7 @@ bool GPS_Clock::SetState(EClockState::Value NewState)
 
 		delete CurrentState;
 		
-		CurrentState = CreateState(NewState, this);
+		CurrentState = CreateState(NewState, *this);
     
 		LastChangeStateTime = millis();
 		return true;
@@ -122,7 +143,7 @@ bool GPS_Clock::CanChangeState()
 
 	else
 	{
-		if ((millis() - LastChangeStateTime) > ChangeStaeClockDelay)
+		if ((millis() - LastChangeStateTime) > ChangeStaeClockDelayMiliSec)
 		{
 			return true;
 		}

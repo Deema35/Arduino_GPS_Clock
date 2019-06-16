@@ -3,7 +3,7 @@
 
 void cButton::Loop()
 {
-	if (millis() - ButtonLastStateChange < DebounceButtonClickDelay)
+	if (millis() - ButtonLastStateChange < DebounceButtonClickDelayMiliSec)
 	{
 		return;
 	}

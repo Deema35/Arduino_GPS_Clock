@@ -7,12 +7,12 @@ class GPS_ClockStaeBase;
 
 
 
-GPS_ClockStaeBase* CreateState(EClockState::Value Type, GPS_Clock* Clock);
+GPS_ClockStaeBase* CreateState(EClockState::Value Type, GPS_Clock& Clock);
 
 class GPS_ClockStaeBase
 {
 public:
-	GPS_ClockStaeBase(GPS_Clock* Clock)  { OwnClock = Clock; }
+	GPS_ClockStaeBase(GPS_Clock& Clock) : OwnClock(Clock) {}
 
 	virtual ~GPS_ClockStaeBase() {}
 
@@ -24,24 +24,35 @@ public:
 
 protected:
 
-	GPS_Clock* OwnClock = NULL;
+	uint8_t GetNumberInRange(uint8_t StartRange, uint8_t EndRange, int Count);
+
+	uint8_t GetMinFromNow(uint8_t DelayMin);
+
+	GPS_Clock& OwnClock;
 
 	unsigned long DelayCount = 0;
 
-	uint8_t GetMinFromNow(uint8_t DelayMin);
+	
 };
 
 class GPS_ClockStaeNormal : public GPS_ClockStaeBase
 {
 public:
 
-	GPS_ClockStaeNormal(GPS_Clock* Clock);
+	GPS_ClockStaeNormal(GPS_Clock& Clock);
 
 	virtual EClockState::Value GetType() override { return EClockState::Normal; };
 
 	virtual void Loop() override;
 
 	virtual bool IsStateBlock() override { return true; }
+
+private:
+
+
+	NormaStaelDisplayMode::Value CurrentDisplayMode = NormaStaelDisplayMode::Time;
+
+	unsigned long DelayFromLastDisplayModeSwitchCount = 0;
 
 };
 
@@ -51,7 +62,7 @@ class GPS_ClockStaeSynchronization : public GPS_ClockStaeBase
 {
 public:
 
-	GPS_ClockStaeSynchronization(GPS_Clock* Clock);
+	GPS_ClockStaeSynchronization(GPS_Clock& Clock);
 
 	~GPS_ClockStaeSynchronization();
 
@@ -73,7 +84,7 @@ class GPS_ClockStaeSetAlaramHour : public GPS_ClockStaeBase
 {
 public:
 
-	GPS_ClockStaeSetAlaramHour(GPS_Clock* Clock);
+	GPS_ClockStaeSetAlaramHour(GPS_Clock& Clock);
 
 	~GPS_ClockStaeSetAlaramHour();
 
@@ -88,7 +99,7 @@ class GPS_ClockStaeSetAlaramMin : public GPS_ClockStaeBase
 {
 public:
 
-	GPS_ClockStaeSetAlaramMin(GPS_Clock* Clock);
+	GPS_ClockStaeSetAlaramMin(GPS_Clock& Clock);
 
 	~GPS_ClockStaeSetAlaramMin();
 
@@ -103,7 +114,7 @@ class GPS_ClockStaeSetTimeZone : public GPS_ClockStaeBase
 {
 public:
 
-	GPS_ClockStaeSetTimeZone(GPS_Clock* Clock);
+	GPS_ClockStaeSetTimeZone(GPS_Clock& Clock);
 
 	~GPS_ClockStaeSetTimeZone();
 
@@ -119,7 +130,7 @@ class GPS_ClockStaeSetSnoozeTime : public GPS_ClockStaeBase
 {
 public:
 
-	GPS_ClockStaeSetSnoozeTime(GPS_Clock* Clock);
+	GPS_ClockStaeSetSnoozeTime(GPS_Clock& Clock);
 
 	~GPS_ClockStaeSetSnoozeTime();
 
@@ -134,7 +145,7 @@ class GPS_ClockStaeAlaramAlert : public GPS_ClockStaeBase
 {
 public:
 
-	GPS_ClockStaeAlaramAlert(GPS_Clock* Clock);
+	GPS_ClockStaeAlaramAlert(GPS_Clock& Clock);
 
 	~GPS_ClockStaeAlaramAlert();
 
@@ -157,7 +168,7 @@ class GPS_ClockStaeAlaramSnooz : public GPS_ClockStaeBase
 {
 public:
 
-	GPS_ClockStaeAlaramSnooz(GPS_Clock* Clock);
+	GPS_ClockStaeAlaramSnooz(GPS_Clock& Clock);
 
 	virtual EClockState::Value GetType() override { return EClockState::AlaramSnooz; };
 
@@ -180,7 +191,7 @@ class GPS_ClockStaeGPSTracing : public GPS_ClockStaeBase
 {
 public:
 
-	GPS_ClockStaeGPSTracing(GPS_Clock* Clock);
+	GPS_ClockStaeGPSTracing(GPS_Clock& Clock);
 
 	~GPS_ClockStaeGPSTracing();
 
@@ -193,8 +204,6 @@ public:
 
 
 private:
-
-	void AppendDisplayMode(int ModeForApp);
 
 	GPGGADataString GPSDataString;
 
