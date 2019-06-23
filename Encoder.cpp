@@ -31,6 +31,7 @@ void cEncoder::S1Function()
 		{
 			EncoderTurnCounter++;
 		}
+		else
 		{
 			S1EncoderTick = true;
 		}
@@ -51,6 +52,7 @@ void cEncoder::S2Function()
 		{
 			EncoderTurnCounter--;
 		}
+		else
 		{
 			S2EncoderTick = true;
 		}
