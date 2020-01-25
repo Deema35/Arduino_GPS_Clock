@@ -96,6 +96,10 @@ public:
 
 	void FistSynchronizationSet() { FistSynchronization = false; }
 
+	unsigned long GetTimeInSeconds(GPGGADataString& GPSTime);
+
+	bool IsTimeCorrect(GPGGADataString& GPSTime);
+
 	cEncoder Encoder;
 
 	cButton EncoderButton{ EncodeClick};

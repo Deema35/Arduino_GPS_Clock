@@ -3,7 +3,7 @@
 #include "GPS_Clock.h"
 
 
-GPS_Clock Clock;
+static GPS_Clock Clock;
 
 // The setup() function runs once each time the micro-controller starts
 void setup()

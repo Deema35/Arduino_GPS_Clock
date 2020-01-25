@@ -74,6 +74,8 @@ public:
 
 private:
 
+	
+
 	GPGGADataString GPSDataString;
 
 	GPGSVDataString SateliteDataString;

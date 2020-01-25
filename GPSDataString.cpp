@@ -195,6 +195,13 @@ uint8_t GPGGADataString::GetlongitudeMinute() const
 	return ConvertStringToInt(longitude + 3, 2);
 }
 
+void GPGGADataString::ResetTimeData()
+{
+	TimeValid = false;
+
+	TimeCount = 0;
+}
+
 //GPGSVDataString.............................................................
 
 uint8_t GPGSVDataString::GetSatteliteCount() const

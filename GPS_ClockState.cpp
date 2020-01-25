@@ -235,13 +235,20 @@ void GPS_ClockStaeSynchronization::Loop()
 		data = OwnClock.GPSModuleSerial.read();
 		SateliteDataString.Encode(data);
 		GPSDataString.Encode(data);
-		//Serial.write(data);
 	}
 
 	if (GPSDataString.IsTimeValid())
 	{
-		OwnClock.SetTime(GPSDataString);
-		OwnClock.SetState(EClockState::Normal);
+		if (OwnClock.IsTimeCorrect(GPSDataString))
+		{
+			OwnClock.SetTime(GPSDataString);
+			OwnClock.SetState(EClockState::Normal);
+		}
+		else
+		{
+			GPSDataString.ResetTimeData();
+		}
+		
 	}
 
 	if (OwnClock.AlaramEnableButton.GetState() == EButtonState::Pressed) OwnClock.SetAlaramEnabel(!OwnClock.IsAlaramEnabel());

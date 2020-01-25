@@ -51,6 +51,8 @@ public:
 
 	uint8_t GetlongitudeMinute() const;
 
+	void ResetTimeData();
+
 protected:
 
 	virtual bool HeaderCheck(char c, uint8_t position) override;

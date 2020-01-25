@@ -105,18 +105,34 @@ EClockState::Value GPS_Clock::GetCurrentState()
 
 void GPS_Clock::SetTime(GPGGADataString& GPSTime)
 {
-	SynhronizationTimeSec =  (unsigned long)GPSTime.GetHour() * 3600;
-
-
-	SynhronizationTimeSec = SynhronizationTimeSec + (unsigned long)GPSTime.GetMin() * 60;
-
-
-	SynhronizationTimeSec = SynhronizationTimeSec + GPSTime.GetSec();
+	SynhronizationTimeSec = GetTimeInSeconds(GPSTime);
 
 	LastSynhronizationCount = GPSTime.GetTimeCount();
 }
 
+unsigned long GPS_Clock::GetTimeInSeconds(GPGGADataString& GPSTime)
+{
+	unsigned long Result = (unsigned long)GPSTime.GetHour() * 3600;
 
+
+	Result = Result + (unsigned long)GPSTime.GetMin() * 60;
+
+
+	Result = Result + GPSTime.GetSec();
+
+	return Result;
+}
+
+bool GPS_Clock::IsTimeCorrect(GPGGADataString& GPSTime)
+{
+	unsigned long DeltaTimeInSecond = GetTimeInSeconds(GPSTime) - (SynhronizationTimeSec + GetSecondsFromLastSinhronization());
+
+	if (IsFistSynchronization()) return true;
+
+	else if (DeltaTimeInSecond > -600 || DeltaTimeInSecond < 600) return true;
+
+	else false;
+}
 
 bool GPS_Clock::SetState(EClockState::Value NewState)
 {
