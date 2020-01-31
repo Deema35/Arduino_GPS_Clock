@@ -29,6 +29,8 @@
 #define AlaramAllertDurationMin 1 
 #define DelayFromLastDisplayModeSwitchMiliSec 10000
 
+#define TIME_CHECK_HALF_INTERVAL_SEC 600 //Half interval in which should be new syncronization time
+
 
 
 
@@ -104,5 +106,16 @@ namespace NormaStaelDisplayMode
 		Time,
 		SynchronizationTime,
 		AlarmTime
+	};
+}
+
+namespace GPSDataStringState
+{
+	enum Value
+	{
+		none,
+		HeaderRead,
+		DataRead,
+		WrongHeader
 	};
 }

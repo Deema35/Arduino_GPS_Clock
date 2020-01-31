@@ -2,41 +2,60 @@
 
 void GPSDataString::Encode(char c)
 {
-	if (FieldsCount == 0 && FieldPosition == 0)
+	switch (State)
 	{
+	case GPSDataStringState::none:
+	case GPSDataStringState::WrongHeader:
+
 		if (c == '$')
 		{
-			FieldPosition++;
+			FieldPosition = 0;
+			FieldsCount = 0;
+			ChangeState(GPSDataStringState::HeaderRead);
+		}
+		
+		break;
+
+	case GPSDataStringState::HeaderRead:
+
+		if (c == ',')
+		{
+			FieldsCount++;
+			FieldPosition = 0;
+			ChangeState(GPSDataStringState::DataRead);
 		}
 
-		return;
-	}
-
-	if (c == ',')
-	{
-		FieldsCount++;
-		FieldPosition = 0;
-		return;
-	}
-
-	if (FieldsCount == 0)
-	{
-		if (!HeaderCheck(c, FieldPosition++))
+		else if(!HeaderCheck(c, FieldPosition++))
 		{
+			ChangeState(GPSDataStringState::WrongHeader);
 			FieldsCount = 0;
 			FieldPosition = 0;
 		}
 
-		return;
+		break;
+
+	case GPSDataStringState::DataRead:
+
+		if (c == ',')
+		{
+			FieldsCount++;
+			FieldPosition = 0;
+		}
+
+		else if (!ReadData(c, FieldsCount, FieldPosition++))
+		{
+
+			ChangeState(GPSDataStringState::none);
+			FieldsCount = 0;
+			FieldPosition = 0;
+		}
+
+		break;
+
 	}
 
-	if (!ReadData(c, FieldsCount, FieldPosition++))
-	{
-		
-		FieldsCount = 0;
-		FieldPosition = 0;
-		return;
-	}
+	return;
+	
 }
 
 unsigned int GPSDataString::ConvertStringToInt(const char* String, uint8_t StringLenght) const
@@ -65,10 +84,10 @@ bool GPGGADataString::ReadData(char c, uint8_t FieldNumber, uint8_t position)
 
 	case 1 :
 
-		if (position < 6)
+		if (position < TIME_STRING_LEN)
 		{
 			TimeString[position] = c;
-			if (position == 5)
+			if (position == TIME_STRING_LEN - 1)
 			{
 				TimeValid = true;
 				TimeCount = millis();
@@ -80,7 +99,7 @@ bool GPGGADataString::ReadData(char c, uint8_t FieldNumber, uint8_t position)
 
 	case 2:
 
-		if (position < 4)
+		if (position < LATITUDE_STRING_LEN)
 		{
 			latitude[position] = c;
 
@@ -92,11 +111,11 @@ bool GPGGADataString::ReadData(char c, uint8_t FieldNumber, uint8_t position)
 		return true;
 	case 4:
 
-		if (position < 5)
+		if (position < LONGITUDE_STRING_LEN)
 		{
 			longitude[position] = c;
 
-			if (position == 4)
+			if (position == LONGITUDE_STRING_LEN - 1)
 			{
 				CoordinateValide = true;
 			}
@@ -119,13 +138,13 @@ bool GPGGADataString::HeaderCheck(char c, uint8_t position)
 	switch (position)
 	{
 
-	case 1:
+	case 0:
 
 		if (c == 'G') return true;
 		
 
 		break;
-	case 2:
+	case 1:
 
 		if (c == 'P') return true;
 		
@@ -133,19 +152,19 @@ bool GPGGADataString::HeaderCheck(char c, uint8_t position)
 		break;
 
 
-	case 3:
+	case 2:
 
 		if (c == 'G') return true;
 
 		break;
 
-	case 4:
+	case 3:
 
 		if (c == 'G')  return true;
 
 		break;
 
-	case 5:
+	case 4:
 
 		if (c == 'A')  return true;
 
@@ -222,7 +241,7 @@ bool GPGSVDataString::ReadData(char c, uint8_t FieldNumber, uint8_t position)
 
 	case 3:
 
-		if (position < 2)
+		if (position < SATTELITE_COUNT_STRING_LEN)
 		{
 			SatteliteCountString[position] = c;
 		}
@@ -244,13 +263,13 @@ bool GPGSVDataString::HeaderCheck(char c, uint8_t position)
 	switch (position)
 	{
 
-	case 1:
+	case 0:
 
 		if (c == 'G') return true;
 
 
 		break;
-	case 2:
+	case 1:
 
 		if (c == 'P') return true;
 
@@ -258,19 +277,19 @@ bool GPGSVDataString::HeaderCheck(char c, uint8_t position)
 		break;
 
 
-	case 3:
+	case 2:
 
 		if (c == 'G') return true;
 
 		break;
 
-	case 4:
+	case 3:
 
 		if (c == 'S')  return true;
 
 		break;
 
-	case 5:
+	case 4:
 
 		if (c == 'V')  return true;
 

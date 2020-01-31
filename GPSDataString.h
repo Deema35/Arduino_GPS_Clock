@@ -1,5 +1,11 @@
 #pragma once
 #include <Arduino.h>
+#include "Define.h"
+
+#define TIME_STRING_LEN 6
+#define LATITUDE_STRING_LEN 4
+#define LONGITUDE_STRING_LEN 5
+#define SATTELITE_COUNT_STRING_LEN 2
 
 class GPSDataString
 {
@@ -17,11 +23,15 @@ protected:
 	unsigned int ConvertStringToInt(const char* String, uint8_t StringLenght) const;
 
 private:
+
+	void ChangeState(GPSDataStringState::Value NewState) { State = NewState; }
+
+private:
 	uint8_t FieldPosition = 0;
 
 	uint8_t FieldsCount = 0;
 
-	
+	GPSDataStringState::Value State = GPSDataStringState::none;
 
 };
 
@@ -67,11 +77,11 @@ private:
 
 	uint8_t TimeStringPosition = 0;
 
-	char TimeString[6];
+	char TimeString[TIME_STRING_LEN] { '0', '0', '0', '0', '0', '0' };
 
-	char latitude[4]{ '0', '0',  '0', '0' };
+	char latitude[LATITUDE_STRING_LEN] { '0', '0',  '0', '0' };
 
-	char longitude[5]{ '0', '0', '0', '0', '0' };
+	char longitude[LONGITUDE_STRING_LEN] { '0', '0', '0', '0', '0' };
 
 	bool CoordinateValide = false;
 
@@ -90,7 +100,7 @@ protected:
 
 	virtual bool ReadData(char c, uint8_t FieldNumber, uint8_t position) override;
 private:
-	char SatteliteCountString[2]{ '0', '0' };
+	char SatteliteCountString[SATTELITE_COUNT_STRING_LEN]{ '0', '0' };
 
 };
 
