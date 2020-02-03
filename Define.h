@@ -116,6 +116,7 @@ namespace GPSDataStringState
 		none,
 		HeaderRead,
 		DataRead,
-		WrongHeader
+		WrongHeader,
+		CheckSummRead
 	};
 }

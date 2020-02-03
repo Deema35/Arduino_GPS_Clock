@@ -112,15 +112,7 @@ void GPS_Clock::SetTime(GPGGADataString& GPSTime)
 
 unsigned long GPS_Clock::GetTimeInSeconds(GPGGADataString& GPSTime)
 {
-	unsigned long Result = (unsigned long)GPSTime.GetHour() * 3600;
-
-
-	Result = Result + (unsigned long)GPSTime.GetMin() * 60;
-
-
-	Result = Result + GPSTime.GetSec();
-
-	return Result;
+	return GPSTime.GetTimeInSec();
 }
 
 bool GPS_Clock::IsTimeCorrect(GPGGADataString& GPSTime)

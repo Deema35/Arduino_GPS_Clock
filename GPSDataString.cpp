@@ -11,6 +11,7 @@ void GPSDataString::Encode(char c)
 		{
 			FieldPosition = 0;
 			FieldsCount = 0;
+			CheckSumm = 0;
 			ChangeState(GPSDataStringState::HeaderRead);
 		}
 		
@@ -25,13 +26,17 @@ void GPSDataString::Encode(char c)
 			ChangeState(GPSDataStringState::DataRead);
 		}
 
-		else if(!HeaderCheck(c, FieldPosition++))
+		else
 		{
-			ChangeState(GPSDataStringState::WrongHeader);
-			FieldsCount = 0;
-			FieldPosition = 0;
+			if (!HeaderCheck(c, FieldPosition++))
+			{
+				ChangeState(GPSDataStringState::WrongHeader);
+				FieldsCount = 0;
+				FieldPosition = 0;
+			}
 		}
 
+		CheckSumm ^= c;
 		break;
 
 	case GPSDataStringState::DataRead:
@@ -40,17 +45,39 @@ void GPSDataString::Encode(char c)
 		{
 			FieldsCount++;
 			FieldPosition = 0;
+			CheckSumm ^= c;
+		}
+		else if (c == '*')
+		{
+			FieldsCount++;
+			FieldPosition = 0;
+			ChangeState(GPSDataStringState::CheckSummRead);
 		}
 
-		else if (!ReadData(c, FieldsCount, FieldPosition++))
+		else 
 		{
+			ReadData(c, FieldsCount, FieldPosition++);
+			CheckSumm ^= c;
+		}
+		
+		
+		break;
+
+	case GPSDataStringState::CheckSummRead:
+
+		if (FieldPosition == 2)
+		{
+			if (CheckSummTest())
+			{
+				DataCommit();
+			}
 
 			ChangeState(GPSDataStringState::none);
 			FieldsCount = 0;
 			FieldPosition = 0;
 		}
 
-		break;
+		else CheckSummRead(c, FieldPosition++);
 
 	}
 
@@ -72,6 +99,33 @@ unsigned int GPSDataString::ConvertStringToInt(const char* String, uint8_t Strin
 	return Res;
 }
 
+int GPSDataString::FromHexCharToInt(char c)
+{
+	if (c >= 'A' && c <= 'F')
+		return c - 'A' + 10;
+	else if (c >= 'a' && c <= 'f')
+		return c - 'a' + 10;
+	else
+		return c - '0';
+}
+
+void GPSDataString::CheckSummRead(char c, uint8_t position)
+{
+	switch (position)
+	{
+	case 0:
+		StringCheckSumm = 16 * FromHexCharToInt(c);
+		break;
+
+	case 1:
+
+		StringCheckSumm += FromHexCharToInt(c);
+		break;
+
+	}
+
+	
+}
 //GPGGADataString...................................................
 
 
@@ -89,8 +143,7 @@ bool GPGGADataString::ReadData(char c, uint8_t FieldNumber, uint8_t position)
 			TimeString[position] = c;
 			if (position == TIME_STRING_LEN - 1)
 			{
-				TimeValid = true;
-				TimeCount = millis();
+				TimeCountBeforeCommited = millis();
 			}
 			
 		}
@@ -117,7 +170,7 @@ bool GPGGADataString::ReadData(char c, uint8_t FieldNumber, uint8_t position)
 
 			if (position == LONGITUDE_STRING_LEN - 1)
 			{
-				CoordinateValide = true;
+				CoordinateValideBeforeCommited = true;
 			}
 		}
 
@@ -174,61 +227,35 @@ bool GPGGADataString::HeaderCheck(char c, uint8_t position)
 	return false;
 }
 
-uint8_t GPGGADataString::GetHour() const
-{
 
-	return ConvertStringToInt(TimeString, 2);
-	
-}
-
-uint8_t GPGGADataString::GetMin() const
-{
-	return ConvertStringToInt(TimeString + 2, 2);
-}
-
-uint8_t GPGGADataString::GetSec() const
-{
-	return ConvertStringToInt(TimeString + 4, 2);
-}
-
-
-
-uint8_t GPGGADataString::GetlatitudeDegrees() const
-{
-	return ConvertStringToInt(latitude, 2);
-	
-}
-
-uint8_t GPGGADataString::GetlatitudeMinute() const
-{
-	return ConvertStringToInt(latitude + 2, 2);
-}
-
-uint8_t GPGGADataString::GetlongitudeDegrees() const
-{
-	return ConvertStringToInt(longitude + 1, 2);
-}
-
-uint8_t GPGGADataString::GetlongitudeMinute() const
-{
-	return ConvertStringToInt(longitude + 3, 2);
-}
 
 void GPGGADataString::ResetTimeData()
 {
-	TimeValid = false;
-
 	TimeCount = 0;
+}
+
+void GPGGADataString::DataCommit()
+{
+	
+	TimeInSec = ConvertStringToInt(TimeString, 2) * 3600; //GetHoure
+	TimeInSec += ConvertStringToInt(TimeString + 2, 2) * 60; //GetMin
+	TimeInSec += ConvertStringToInt(TimeString + 4, 2); //GetSec
+
+	LatitudeDegrees = ConvertStringToInt(latitude, 2); // GetlatitudeDegrees
+	LatitudeMinute = ConvertStringToInt(latitude + 2, 2); // GetlatitudeMinute
+	
+	LongitudeDegrees = ConvertStringToInt(longitude + 1, 2); //GetlongitudeDegrees
+	LongitudeMinute = ConvertStringToInt(longitude + 3, 2); //GetlongitudeMinute
+
+	TimeCount = TimeCountBeforeCommited;
+
+	CoordinateValide = CoordinateValideBeforeCommited;
+	
 }
 
 //GPGSVDataString.............................................................
 
-uint8_t GPGSVDataString::GetSatteliteCount() const
-{
 
-	return ConvertStringToInt(SatteliteCountString, 2);
-
-}
 
 bool GPGSVDataString::ReadData(char c, uint8_t FieldNumber, uint8_t position)
 {
@@ -297,4 +324,9 @@ bool GPGSVDataString::HeaderCheck(char c, uint8_t position)
 	}
 
 	return false;
+}
+
+void GPGSVDataString::DataCommit()
+{
+	SatteliteCount = ConvertStringToInt(SatteliteCountString, 2);
 }

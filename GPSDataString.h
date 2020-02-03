@@ -16,15 +16,25 @@ public:
 
 protected:
 
-	virtual bool HeaderCheck(char c, uint8_t position) = 0;
-
-	virtual bool ReadData(char c, uint8_t FieldNumber, uint8_t position) = 0;
+	
 
 	unsigned int ConvertStringToInt(const char* String, uint8_t StringLenght) const;
 
 private:
 
+	virtual bool HeaderCheck(char c, uint8_t position) = 0;
+
+	virtual bool ReadData(char c, uint8_t FieldNumber, uint8_t position) = 0;
+
+	virtual void DataCommit() = 0;
+
 	void ChangeState(GPSDataStringState::Value NewState) { State = NewState; }
+
+	int FromHexCharToInt(char c);
+
+	void CheckSummRead(char c, uint8_t position);
+
+	bool CheckSummTest() { return CheckSumm == StringCheckSumm; }
 
 private:
 	uint8_t FieldPosition = 0;
@@ -33,6 +43,9 @@ private:
 
 	GPSDataStringState::Value State = GPSDataStringState::none;
 
+	int CheckSumm = 0;
+
+	int StringCheckSumm = 0;
 };
 
 
@@ -40,42 +53,39 @@ class GPGGADataString : public GPSDataString
 {
 public:
 
-	bool IsTimeValid() const { return TimeValid; }
+	bool IsTimeValid() const { return TimeCount != 0; }
 
 	bool IsCoordinateValide() const { return CoordinateValide; }
 
-	uint8_t GetHour() const;
-
-	uint8_t GetMin() const;
-
-	uint8_t GetSec() const;
+	unsigned long GetTimeInSec() const { return TimeInSec; }
 
 	unsigned long GetTimeCount() const { return TimeCount; }
 
+	uint8_t GetlatitudeDegrees() const { return LatitudeDegrees; }
 
-	uint8_t GetlatitudeDegrees() const;
+	uint8_t GetlatitudeMinute() const { return LatitudeMinute; }
 
-	uint8_t GetlatitudeMinute() const;
+	uint8_t GetlongitudeDegrees() const { return LongitudeDegrees; }
 
-	uint8_t GetlongitudeDegrees() const;
-
-	uint8_t GetlongitudeMinute() const;
+	uint8_t GetlongitudeMinute() const { return LongitudeMinute; }
 
 	void ResetTimeData();
 
-protected:
+private:
 
 	virtual bool HeaderCheck(char c, uint8_t position) override;
 
 	virtual bool ReadData(char c, uint8_t FieldNumber, uint8_t position) override;
 
+	virtual void DataCommit() override;
+
 private:
 
-	bool TimeValid = false;
+	unsigned long TimeCountBeforeCommited = 0;
 
 	unsigned long TimeCount = 0;
 
-	uint8_t TimeStringPosition = 0;
+	unsigned long TimeInSec = 0;
 
 	char TimeString[TIME_STRING_LEN] { '0', '0', '0', '0', '0', '0' };
 
@@ -83,7 +93,17 @@ private:
 
 	char longitude[LONGITUDE_STRING_LEN] { '0', '0', '0', '0', '0' };
 
+	bool CoordinateValideBeforeCommited = false;
+
 	bool CoordinateValide = false;
+
+	uint8_t LatitudeDegrees = 0;
+
+	uint8_t LatitudeMinute = 0;
+
+	uint8_t LongitudeDegrees = 0;
+
+	uint8_t LongitudeMinute = 0;
 
 };
 
@@ -92,15 +112,19 @@ class GPGSVDataString : public GPSDataString
 public:
 
 
-	uint8_t GetSatteliteCount() const;
+	uint8_t GetSatteliteCount() const { return SatteliteCount; }
 
-protected:
+private:
 
 	virtual bool HeaderCheck(char c, uint8_t position) override;
 
 	virtual bool ReadData(char c, uint8_t FieldNumber, uint8_t position) override;
+
+	virtual void DataCommit() override;
+
 private:
 	char SatteliteCountString[SATTELITE_COUNT_STRING_LEN]{ '0', '0' };
 
+	uint8_t SatteliteCount = 0;
 };
 
