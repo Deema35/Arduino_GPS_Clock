@@ -121,7 +121,7 @@ bool GPS_Clock::IsTimeCorrect(GPGGADataString& GPSTime)
 
 	if (IsFistSynchronization()) return true;
 
-	else if (DeltaTimeInSecond > -TIME_CHECK_HALF_INTERVAL_SEC || DeltaTimeInSecond < TIME_CHECK_HALF_INTERVAL_SEC) return true;
+	else if (DeltaTimeInSecond > -TIME_CHECK_HALF_INTERVAL_SEC && DeltaTimeInSecond < TIME_CHECK_HALF_INTERVAL_SEC) return true;
 
 	else false;
 }
