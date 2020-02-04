@@ -132,7 +132,7 @@ bool GPS_Clock::SetState(EClockState::Value NewState)
 	
 	if (CanChangeState())
 	{
-		Serial.print("Change state "); Serial.print(int(CurrentState)); Serial.print(" to "); Serial.println(int(NewState));
+		//Serial.print("Change state "); Serial.print(int(CurrentState->GetType())); Serial.print(" to "); Serial.println(int(NewState));
 
 		delete CurrentState;
 		

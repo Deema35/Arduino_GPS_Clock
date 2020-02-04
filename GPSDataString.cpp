@@ -12,6 +12,7 @@ void GPSDataString::Encode(char c)
 			FieldPosition = 0;
 			FieldsCount = 0;
 			CheckSumm = 0;
+			StringCheckSumm = 0;
 			ChangeState(GPSDataStringState::HeaderRead);
 		}
 		
@@ -71,6 +72,7 @@ void GPSDataString::Encode(char c)
 			{
 				DataCommit();
 			}
+			
 
 			ChangeState(GPSDataStringState::none);
 			FieldsCount = 0;
@@ -236,7 +238,6 @@ void GPGGADataString::ResetTimeData()
 
 void GPGGADataString::DataCommit()
 {
-	
 	TimeInSec = ConvertStringToInt(TimeString, 2) * 3600; //GetHoure
 	TimeInSec += ConvertStringToInt(TimeString + 2, 2) * 60; //GetMin
 	TimeInSec += ConvertStringToInt(TimeString + 4, 2); //GetSec

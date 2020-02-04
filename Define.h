@@ -25,7 +25,7 @@
 
 #define DebounceButtonClickDelayMiliSec 100 
 #define ChangeStaeClockDelayMiliSec 500 //Delay between change state if state blocked
-#define SinhronizationDelaySec  86400 //Deleay between time syncronization in seconds
+#define SinhronizationDelaySec  86400 //Deleay between time syncronization in seconds 86400
 #define AlaramAllertDurationMin 1 
 #define DelayFromLastDisplayModeSwitchMiliSec 10000
 
