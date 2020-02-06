@@ -9,10 +9,7 @@ void GPSDataString::Encode(char c)
 
 		if (c == '$')
 		{
-			FieldPosition = 0;
-			FieldsCount = 0;
-			CheckSumm = 0;
-			StringCheckSumm = 0;
+			IniciateString();
 			ChangeState(GPSDataStringState::HeaderRead);
 		}
 		
@@ -22,9 +19,9 @@ void GPSDataString::Encode(char c)
 
 		if (c == ',')
 		{
-			FieldsCount++;
-			FieldPosition = 0;
+			NextField();
 			ChangeState(GPSDataStringState::DataRead);
+			
 		}
 
 		else
@@ -32,33 +29,29 @@ void GPSDataString::Encode(char c)
 			if (!HeaderCheck(c, FieldPosition++))
 			{
 				ChangeState(GPSDataStringState::WrongHeader);
-				FieldsCount = 0;
-				FieldPosition = 0;
 			}
 		}
 
-		CheckSumm ^= c;
+		ChecSummByteProcessed(c);
 		break;
 
 	case GPSDataStringState::DataRead:
 
 		if (c == ',')
 		{
-			FieldsCount++;
-			FieldPosition = 0;
-			CheckSumm ^= c;
+			NextField();
+			ChecSummByteProcessed(c);
 		}
 		else if (c == '*')
 		{
-			FieldsCount++;
-			FieldPosition = 0;
+			NextField();
 			ChangeState(GPSDataStringState::CheckSummRead);
 		}
 
 		else 
 		{
 			ReadData(c, FieldsCount, FieldPosition++);
-			CheckSumm ^= c;
+			ChecSummByteProcessed(c);
 		}
 		
 		
@@ -66,30 +59,38 @@ void GPSDataString::Encode(char c)
 
 	case GPSDataStringState::CheckSummRead:
 
+		CheckSummRead(c, FieldPosition++);
+
 		if (FieldPosition == 2)
 		{
-			if (CheckSummTest())
-			{
-				DataCommit();
-			}
-			
-
+			if (CheckSummTest()) DataCommit();
 			ChangeState(GPSDataStringState::none);
-			FieldsCount = 0;
-			FieldPosition = 0;
 		}
 
-		else CheckSummRead(c, FieldPosition++);
-
+		break;
 	}
 
 	return;
 	
 }
 
-unsigned int GPSDataString::ConvertStringToInt(const char* String, uint8_t StringLenght) const
+void GPSDataString::IniciateString()
 {
-	unsigned int Res = 0;
+	FieldPosition = 0;
+	FieldsCount = 0;
+	CheckSumm = 0;
+	StringCheckSumm = 0;
+}
+
+void GPSDataString::NextField()
+{
+	FieldsCount++;
+	FieldPosition = 0;
+}
+
+unsigned long GPSDataString::ConvertStringToInt(const char* String, uint8_t StringLenght) const
+{
+	unsigned long Res = 0;
 	int k = 0;
 	for (int i = 0; i < StringLenght; i++)
 	{
@@ -241,7 +242,7 @@ void GPGGADataString::DataCommit()
 	TimeInSec = ConvertStringToInt(TimeString, 2) * 3600; //GetHoure
 	TimeInSec += ConvertStringToInt(TimeString + 2, 2) * 60; //GetMin
 	TimeInSec += ConvertStringToInt(TimeString + 4, 2); //GetSec
-
+	
 	LatitudeDegrees = ConvertStringToInt(latitude, 2); // GetlatitudeDegrees
 	LatitudeMinute = ConvertStringToInt(latitude + 2, 2); // GetlatitudeMinute
 	

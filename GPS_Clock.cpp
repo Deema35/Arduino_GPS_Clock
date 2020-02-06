@@ -59,6 +59,7 @@ uint8_t GPS_Clock::GetSec() const
 
 uint8_t GPS_Clock::GetMin() const
 {
+	
 	unsigned long Result = SynhronizationTimeSec + GetSecondsFromLastSinhronization();
 
 	Result = Result / 60;
@@ -123,7 +124,7 @@ bool GPS_Clock::IsTimeCorrect(GPGGADataString& GPSTime)
 
 	else if (DeltaTimeInSecond > -TIME_CHECK_HALF_INTERVAL_SEC && DeltaTimeInSecond < TIME_CHECK_HALF_INTERVAL_SEC) return true;
 
-	else false;
+	else return false;
 }
 
 bool GPS_Clock::SetState(EClockState::Value NewState)
@@ -250,8 +251,6 @@ void GPS_Clock::RefreshClock(bool ChangeBrightness)
 	if (IsMilliseOverloaf()) SetState(EClockState::Synchronization);
 
 	RefreshClockDisplay(GetHour(), GetMin(), ChangeBrightness, EDisplayMode::Auto);
-
-	//Serial.print("time "); Serial.print(Hour); Serial.print(":"); Serial.print(Min); Serial.print(":"); Serial.println(GetSec());
 }
 
 

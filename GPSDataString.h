@@ -18,7 +18,7 @@ protected:
 
 	
 
-	unsigned int ConvertStringToInt(const char* String, uint8_t StringLenght) const;
+	unsigned long ConvertStringToInt(const char* String, uint8_t StringLenght) const;
 
 private:
 
@@ -35,6 +35,12 @@ private:
 	void CheckSummRead(char c, uint8_t position);
 
 	bool CheckSummTest() { return CheckSumm == StringCheckSumm; }
+
+	void IniciateString();
+
+	void NextField();
+
+	void ChecSummByteProcessed(char c) { CheckSumm ^= c; }
 
 private:
 	uint8_t FieldPosition = 0;
