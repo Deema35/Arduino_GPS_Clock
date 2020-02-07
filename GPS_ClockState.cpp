@@ -239,15 +239,8 @@ void GPS_ClockStaeSynchronization::Loop()
 
 	if (GPSDataString.IsTimeValid())
 	{
-		if (OwnClock.IsTimeCorrect(GPSDataString))
-		{
-			OwnClock.SetTime(GPSDataString);
-			OwnClock.SetState(EClockState::Normal);
-		}
-		else
-		{
-			GPSDataString.ResetTimeData();
-		}
+		OwnClock.SetTime(GPSDataString);
+		OwnClock.SetState(EClockState::Normal);
 		
 	}
 

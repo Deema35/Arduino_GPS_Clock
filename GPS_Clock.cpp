@@ -51,7 +51,7 @@ void GPS_Clock::Loop()
 
 uint8_t GPS_Clock::GetSec() const
 {
-	unsigned long Result = SynhronizationTimeSec + GetSecondsFromLastSinhronization();
+	unsigned long Result = GetTimeInSeconds();
 	return Result % 60;
 	
 }
@@ -60,7 +60,7 @@ uint8_t GPS_Clock::GetSec() const
 uint8_t GPS_Clock::GetMin() const
 {
 	
-	unsigned long Result = SynhronizationTimeSec + GetSecondsFromLastSinhronization();
+	unsigned long Result = GetTimeInSeconds();
 
 	Result = Result / 60;
 
@@ -70,7 +70,7 @@ uint8_t GPS_Clock::GetMin() const
 
 uint8_t GPS_Clock::GetHour() const
 {
-	unsigned long Result = SynhronizationTimeSec + GetSecondsFromLastSinhronization();
+	unsigned long Result = GetTimeInSeconds();
 	Result = Result / 3600;
 
 	Result = TimeZone + Result;
@@ -106,26 +106,18 @@ EClockState::Value GPS_Clock::GetCurrentState()
 
 void GPS_Clock::SetTime(GPGGADataString& GPSTime)
 {
-	SynhronizationTimeSec = GetTimeInSeconds(GPSTime);
+	SynhronizationTimeSec = GPSTime.GetTimeInSec();
 
 	LastSynhronizationCount = GPSTime.GetTimeCount();
 }
 
-unsigned long GPS_Clock::GetTimeInSeconds(GPGGADataString& GPSTime)
+unsigned long GPS_Clock::GetTimeInSeconds() const
 {
-	return GPSTime.GetTimeInSec();
+	unsigned long Result = SynhronizationTimeSec + GetSecondsFromLastSinhronization();
+
+	return Result % 86400; // (second in day) 86400 = 24 * 3600 
 }
 
-bool GPS_Clock::IsTimeCorrect(GPGGADataString& GPSTime)
-{
-	unsigned long DeltaTimeInSecond = GetTimeInSeconds(GPSTime) - (SynhronizationTimeSec + GetSecondsFromLastSinhronization());
-
-	if (IsFistSynchronization()) return true;
-
-	else if (DeltaTimeInSecond > -TIME_CHECK_HALF_INTERVAL_SEC && DeltaTimeInSecond < TIME_CHECK_HALF_INTERVAL_SEC) return true;
-
-	else return false;
-}
 
 bool GPS_Clock::SetState(EClockState::Value NewState)
 {

@@ -87,18 +87,11 @@ public:
 
 	void SetSnoozDelay(int NewSnoozDelay);
 
-
-	//void SendSleepModeMsg();
-
-	//void SendHotStartMsg();
-
 	bool IsFistSynchronization() { return FistSynchronization; }
 
 	void FistSynchronizationSet() { FistSynchronization = false; }
 
-	unsigned long GetTimeInSeconds(GPGGADataString& GPSTime);
-
-	bool IsTimeCorrect(GPGGADataString& GPSTime);
+public:
 
 	cEncoder Encoder;
 
@@ -107,6 +100,10 @@ public:
 	cButton AlaramEnableButton { AllaramEnableButton} ;
 
 	SoftwareSerial GPSModuleSerial;
+
+private:
+
+	unsigned long GetTimeInSeconds() const;
 
 private:
 
