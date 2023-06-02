@@ -9,4 +9,6 @@
 __vm/*
 Release/*
 .vs/*
+.pio/*
+.vscode/*
 

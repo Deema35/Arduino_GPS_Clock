@@ -279,6 +279,8 @@ void GPS_Clock::SwitchOnDisplayHour(EDisplayMode::Value BrightnessLevelHour)
 
 		break;
 
+	default: break;
+
 	}
 
 	
@@ -302,7 +304,7 @@ void GPS_Clock::SwitchOnDisplayMin(EDisplayMode::Value BrightnessLevelMin)
 		digitalWrite(EnabelMinDisplay, LOW);
 
 		break;
-
+	default: break;
 	}
 
 }

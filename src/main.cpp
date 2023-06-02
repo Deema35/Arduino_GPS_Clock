@@ -1,4 +1,4 @@
-
+#include <Arduino.h>
 #include "Define.h"
 #include "GPS_Clock.h"
 

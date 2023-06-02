@@ -1,27 +1,27 @@
 #pragma once
-#define ResetTime D0
+#define ResetTime 0
 
-#define EncoderS1 D2
-#define EncoderS2 D3
+#define EncoderS1 2
+#define EncoderS2 3
 
-#define TwoDotCenter D4
+#define TwoDotCenter 4
 #define GPSTX 99 //Not used
-#define GPSRX D5
-#define H_Clock D6
-#define M_Clock D7
-#define EnabelMinDisplay D8
-#define DisplayBrightness D9
-#define EnabelHourSecondDisplay D10
-#define Buzzer D11
-#define EnanbelGPS D12
-#define EnabelHourFistDisplay D13
+#define GPSRX 5
+#define H_Clock 6
+#define M_Clock 7
+#define EnabelMinDisplay 8
+#define DisplayBrightness 9
+#define EnabelHourSecondDisplay 10
+#define Buzzer 11
+#define EnanbelGPS 12
+#define EnabelHourFistDisplay 13
 
-#define EncodeClick A0
-#define AllaramEnableLight A1
-#define AllaramEnableButton A2
-#define SnoozeButton A3
-#define LightSensorSDA A4
-#define LightSensorSCL A5
+#define EncodeClick 14
+#define AllaramEnableLight 15
+#define AllaramEnableButton 16
+#define SnoozeButton 17
+#define LightSensorSDA 18
+#define LightSensorSCL 19
 
 #define DebounceButtonClickDelayMiliSec 100 
 #define ChangeStaeClockDelayMiliSec 500 //Delay between change state if state blocked
